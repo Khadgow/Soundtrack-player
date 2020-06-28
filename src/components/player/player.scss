@@ -1,0 +1,97 @@
+.player {
+  display: grid;
+  grid-template-columns: 20vw  auto 15vw ;
+  grid-template-rows: 40% 60%;
+  grid-column-gap: 16px;
+  align-items: center;
+  grid-template-areas:
+  "info buttons volume"
+  "info time volume";
+  position: fixed;
+  width: 100vw;
+  height:10vh;
+  background-color: #202020;
+  top: 90vh;
+  left: 0;
+  color: white;
+  z-index: 2;
+  font-size: 1.2vw;
+  .composer{
+    font-size: 1vw;
+  }
+  #pause{
+    color: #9E9E9E;
+    padding: 5px;
+    margin: auto;
+    width: 4vh;
+    grid-area: buttons;
+    transition: .4s;
+
+  }
+  #pause:hover{
+    cursor: pointer;
+    color: white;
+  }
+  #volume-slider{
+    margin: 10%;
+    grid-area: volume;
+  }
+  #time-slider{
+    padding: 5%;
+    text-align: justify;
+    grid-area: time;
+  }
+  #info{
+    img{
+      margin: 5px;
+      width: 8vh;
+      height: 8vh;
+    }
+    display: flex;
+    align-items: center;
+    margin: 5%;
+    grid-area: info;
+  }
+  ul{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+  li{
+    width: 100%;
+    margin: 12px;
+    color: white;
+  }
+  .slider{
+    -webkit-appearance: none;
+    height:  1vh;
+    width: 100%;
+    border-radius: 2px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .4s;
+    transition: opacity .4s;
+
+  }
+  .slider:hover{
+      opacity: 1;
+  }
+  .slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.7vh;
+    height: 1.7vh;
+    border-radius: 50%;
+    background: #9E9E9E;
+    cursor: pointer;
+  }
+}
+.first-start{
+  color: white;
+  text-align: center;
+  margin: auto;
+}

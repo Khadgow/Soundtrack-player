@@ -1,0 +1,10 @@
+.mainPage{
+  margin-left: 5rem;
+  padding-bottom: 10vh;
+  display:  grid;
+  grid-auto-rows: minmax(200px, auto);
+  grid-template-columns: repeat(auto-fill, minmax(300px, auto));
+  align-items: center;
+  justify-content: center;
+}
+
