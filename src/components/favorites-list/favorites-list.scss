@@ -1,11 +1,25 @@
-.favorites-list{
-  margin-left: 15%;
-}
-.empty{
-  margin-left: 15%;
-  font-size: 30px;
-}
-
 .container {
   display: flex;
+}
+
+.favorites-list {
+  font-size: 1.4rem;
+}
+
+@media (min-width: 768px) {
+
+  .empty {
+    font-size: 30px;
+  }
+
+}
+@media (max-width: 767px) {
+
+  .favorites-list{
+    margin-top: 11vh;
+  }
+  .empty{
+    font-size: 30px;
+  }
+
 }

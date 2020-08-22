@@ -1,50 +1,54 @@
 import React, {Component} from "react";
-import {gamesError, gamesLoaded, gamesRequested, addMusic} from "../../actions";
-import compose from "../../utils/compose";
-import WithSountracksService from "../hoc";
+import {addMusic, fetchMusic} from "../../actions";
 import {connect} from "react-redux";
 import Spinner from "../spinner";
 import './music-list.scss'
 import ErrorIndicator from "../error-indicator";
 import FavoriteButton from '../favorite-button'
+import {NotFoundPage} from "../pages";
 
 class MusicList extends Component {
 
 
     componentDidMount() {
-        const {SoundtracksService, gamesLoaded, gamesError} = this.props;
-        gamesRequested();
-        SoundtracksService.getSoundtracks()
-            .then((data) => gamesLoaded(data))
-            .catch((err) => gamesError(err));
+        const {fetchMusic} = this.props;
+        fetchMusic(window.location.pathname.slice(7));
     }
 
     render() {
-        const {name, games, loading, error, addMusic, favoriteMusic} = this.props;
-        if(loading){
-            return <div className='musicList'><Spinner/></div>
-        }
+        const {name, music, loading, error, addMusic, favoriteMusic} = this.props;
         if(error){
+            if(error===404){
+                return <NotFoundPage/>
+            }
             return <div className='musicList'><ErrorIndicator/></div>
         }
-        const game = games.find( (game) => (name === game.name));
-        if (game) {
+        if(!music || loading){
+            return <div className='musicList'><Spinner/></div>
+        }
+
+        if(music) {
             return (
                 <div className="musicList">
-                    <h1>{game.name}</h1>
+                    <h1>{name}</h1>
                     <ul>
                         {
-                            game.soundtracks.map(({src, name, composer, imageurl}) => {
+                            music.soundtracks.map(({src, name}) => {
                                 return (
                                     <li key={name}>
                                         <div className="container">
                                             <div className="music-name" onClick={
                                                 () => {
-                                                    addMusic({src, composer: game.composer, img: game.imageurl , name});
-                                                    localStorage.setItem("lastMusic", JSON.stringify({src, composer: game.composer, img: game.imageurl , name}));
+                                                    addMusic({src, composer: music.composer, img: music.image, name});
+                                                    localStorage.setItem("lastMusic", JSON.stringify({
+                                                        src,
+                                                        composer: music.composer,
+                                                        img: music.image,
+                                                        name
+                                                    }));
                                                 }}>{name}</div>
-                                            <FavoriteButton name={name} src={src} composer={game.composer}
-                                                            img={game.imageurl} favoriteMusic={favoriteMusic}/>
+                                            <FavoriteButton name={name} src={src} composer={music.composer}
+                                                            img={music.image} favoriteMusic={favoriteMusic}/>
                                         </div>
                                     </li>
                                 )
@@ -52,24 +56,19 @@ class MusicList extends Component {
                         }
                     </ul>
                 </div>
-            )
+            );
         }
-        return <div className='musicList'>Page not found</div>
+
     }
 }
 
-const mapStateToProps = ({ games, loading, error, favoriteMusic}) => {
-    return {games, loading, error, favoriteMusic} ;
+const mapStateToProps = ({ music, loading, error, favoriteMusic}) => {
+    return {music, loading, error, favoriteMusic} ;
 };
 
 const mapDispatchToProps = {
-    gamesLoaded,
-    gamesRequested,
-    gamesError,
+    fetchMusic,
     addMusic
 
 };
-export default compose(
-    WithSountracksService(),
-    connect(mapStateToProps, mapDispatchToProps)
-)(MusicList);
+export default connect(mapStateToProps, mapDispatchToProps)(MusicList);

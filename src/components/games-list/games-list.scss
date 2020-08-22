@@ -1,10 +1,20 @@
 .mainPage{
-  margin-left: 5rem;
+  display: grid;
   padding-bottom: 10vh;
-  display:  grid;
-  grid-auto-rows: minmax(200px, auto);
-  grid-template-columns: repeat(auto-fill, minmax(300px, auto));
   align-items: center;
   justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .mainPage {
+    grid-template-columns: repeat(auto-fill, minmax(300px, auto));
+  }
+}
+
+@media (max-width: 767px) {
+
+  .mainPage {
+    grid-template-columns: repeat(auto-fill, minmax(200px, auto));
+  }
 }
 

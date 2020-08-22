@@ -10,9 +10,13 @@ body::-webkit-scrollbar-thumb{
 }
 body{
   font-family: "Montserrat";
-}
+  background-color: white;
+  @media (min-width: 768px) {
+    margin-left: 5.5rem;
+  }
 
-#root{
-  margin: 0;
-  $nav-color: #000abc;
+  @media (max-width: 767px) {
+    margin-top: 11vh;
+  }
+
 }

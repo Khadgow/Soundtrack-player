@@ -1,15 +1,21 @@
 .musicList{
-  margin-left: 5rem;
-}
-.music-name{
-  font-size: 1.4rem;
-  cursor: pointer;
-  transition: 0.5s;
-}
-.music-name:hover{
-  text-decoration: underline;
-}
+  .music-name{
+    cursor: pointer;
+    transition: 0.5s;
+  }
 
-.container{
-  display: flex;
+  .music-name:hover{
+    text-decoration: underline;
+  }
+
+  .container{
+    display: flex;
+  }
+
+
+}
+@media (min-width: 768px) {
+  .music-name{
+      font-size: 1.4rem;
+  }
 }

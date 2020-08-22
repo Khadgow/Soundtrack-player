@@ -31,7 +31,7 @@ class FavoritesList extends Component {
         }
         else {
             return (
-                <div className="empty">
+                <div className="favorites-list empty">
                     Favorite list is empty
                 </div>
             )

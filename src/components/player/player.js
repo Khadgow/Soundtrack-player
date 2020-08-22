@@ -1,79 +1,119 @@
 import React, {Component} from "react";
 import { setVolume, setPause, setTime, addMusic} from "../../actions";
 import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom'
+import {compose} from 'redux'
 import './player.scss'
+
 
 class Player extends Component {
 
     componentDidMount() {
+        if(localStorage.lastMusic){
+            const {src, composer, img, name} = JSON.parse(localStorage.getItem("lastMusic"));
+            this.props.addMusic({src, composer, img , name});
+        }
         setInterval(()=>{
             if(this.props.nowPlaying) {
                 this.props.setTime({time: this.props.nowPlaying.currentTime, changeBy: "time"})
             }
         }, 500);
-        if(localStorage.lastMusic){
-            const {addMusic} = this.props;
-            const {src, composer, img, name} = JSON.parse(localStorage.getItem("lastMusic"));
-            addMusic({src, composer, img , name});
 
-        }
+        //KONAMI code for secret page
+        const konamiCode = "ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba";
+        let enterKeys = "";
+
+        //Keyboard control
+        document.addEventListener("keydown", (e) =>{
+            enterKeys += e.key;
+            if(!konamiCode.includes(enterKeys)){
+                enterKeys = ""
+            } else if(enterKeys===konamiCode){
+                this.props.history.push("/secretPage");
+
+            }
+
+            if(this.props.nowPlaying){
+                if(e.code === "ArrowRight") this.props.setTime({time:  this.props.nowPlaying.currentTime+5, changeBy: "set"});
+                if(e.code === "ArrowLeft") this.props.setTime({time:  this.props.nowPlaying.currentTime-5, changeBy: "set"});
+                if(e.code==="ArrowUp") this.props.setVolume(this.props.nowPlaying.volume + 0.05);
+                if(e.code==="ArrowDown") this.props.setVolume(this.props.nowPlaying.volume - 0.05);
+                if(e.code === "Space"){
+                    if(this.props.pause){
+                        this.props.setPause(false);
+                        this.props.nowPlaying.play();
+                    } else {
+                        this.props.setPause(true);
+                        this.props.nowPlaying.pause();
+                    }
+                }
+            }
+        });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-    if(prevProps.nowPlaying !== this.props.nowPlaying){
-        if ( prevProps.nowPlaying){
-            prevProps.nowPlaying.pause();
-            this.props.nowPlaying.volume = this.props.volume;
-            this.props.setPause(true);
-            this.props.setTime(0);
+        const {nowPlaying, setPause, setTime, time, changeBy, volume} = this.props;
+        if (prevProps.nowPlaying !== this.props.nowPlaying) {
+            if (prevProps.nowPlaying) {
+                prevProps.nowPlaying.pause();
+                nowPlaying.volume = this.props.volume;
+                setPause(true);
+                setTime(0);
+            }
+        }
+        if (prevProps.volume !== volume) {
+           nowPlaying.volume = volume;
+        }
+        if (nowPlaying.ended) {
+            setPause(true);
+        }
+        if (prevProps.time !== time && changeBy === "set") {
+            nowPlaying.currentTime = time;
         }
     }
-    if(prevProps.volume !== this.props.volume){
-        this.props.nowPlaying.volume = this.props.volume;
-    }
-    if(this.props.nowPlaying.currentTime === this.props.nowPlaying.duration){
-        this.props.setPause(true);
-    }
-    if(prevProps.time !== this.props.time && this.props.changeBy==="set"){
-        this.props.nowPlaying.currentTime = this.props.time;
-    }
-}
 
 
     render() {
-        const {nowPlaying, setVolume, setPause, pause, time=0, setTime} = this.props;
-        if (nowPlaying){
+        const {nowPlaying, setVolume, setPause, pause, time = 0, setTime, volume = 1} = this.props;
+        if (nowPlaying) {
+
             const {composer, img, name} = this.props.nowPlayingInfo;
-            return(
+            return (
                 <div className="player">
 
-                            <PauseButton nowPlaying={nowPlaying} pause={pause} setPause={setPause}/>
-                        <div id="volume-slider">
-                            <input type="range" id="volume" name="volume" className="slider"
-                                   min="0" max="1" step='0.01'  onChange={ ()=>{setVolume(Number(document.getElementById('volume').value))}}/>
-                                <label htmlFor="volume">Volume</label>
+                    <PauseButton nowPlaying={nowPlaying} pause={pause} setPause={setPause}/>
+                    <div id="volume-slider">
+                        <input type="range" id="volume" name="volume" className="slider" value={volume}
+                               min="0" max="1" step='0.01' onChange={() => {
+                            setVolume(Number(document.getElementById('volume').value))
+                        }}/>
+                        <label htmlFor="volume">Volume</label>
+                    </div>
+                    <div id="time-slider">
+                        <input type="range" id="time" name="time" className="slider" value={time}
+                               min="0" max={String(nowPlaying.duration)} step='0.000001' onChange={(event) => setTime({
+                            time: event.target.value,
+                            changeBy: "set"
+                        })}/>
+                    </div>
+                    <div id="info">
+                        <img alt="Music icon" src={img}/>
+                        <div>
+                            <div>{name}</div>
+                            <div className="composer">{composer}</div>
                         </div>
-                        <div id="time-slider">
-                            <input type="range" id="time" name="time" className="slider" value={time}
-                                   min="0" max={String(nowPlaying.duration)} step='0.000001' onChange={ ()=>setTime({time: Number(document.getElementById('time').value), changeBy: "set"})}/>
-                        </div>
-                        <div id="info">
-                            <img alt="Music icon" src={img} />
-                            <div>
-                                <div>{name}</div>
-                                <div className="composer">{composer}</div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className="player">
+                    <span className="first-start">Select something</span>
                 </div>
             )
         }
-        return (
-            <div className="player">
-                <span className="first-start">Select something</span>
-            </div>
-        )
-    }
 
+    }
 }
 
 const PauseButton = ({nowPlaying, pause, setPause}) =>{
@@ -116,4 +156,4 @@ const mapDispatchToProps = {
     setTime,
     addMusic
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Player)
+export default  compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Player)

@@ -1,24 +1,54 @@
-.list-item {
+  .list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  border-radius: 10px;
   margin: 10px;
-  img{
+
+  img {
     cursor: pointer;
     transition: 0.5s;
   }
-  img:hover{
+
+  img:hover {
     filter: brightness(40%)
   }
 }
 
-.composer-name{
+.composer-name {
   color: #A3A3A3;
 }
 
-.music-name{
+.music-name {
   cursor: pointer;
   transition: 0.5s;
 }
-.music-name:hover{
+.music-name:hover {
   text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+
+  .list-item {
+    font-size: 1.4rem;
+    img {
+      width: 238px;
+      height: 238px;
+    }
+
+  }
+
+}
+
+@media (max-width: 767px) {
+  .list-item {
+    font-size: 0.9rem;
+    img {
+      width: 150px;
+      height: 150px;
+    }
+
+  }
+
+
 }

@@ -1,6 +1,6 @@
 const initialState = {
     games:[],
-    playlist:[],
+    music: null,
     volume: 1,
     pause: true,
     time: 0,
@@ -15,10 +15,11 @@ const initialState = {
 const reducer = (state = initialState, action) =>{
 switch (action.type) {
 
-    case 'FETCH_GAMES_REQUEST':
+    case 'FETCH_REQUEST':
         return {
             ...state,
             games: [],
+            music: null,
             loading: true,
             error: null
         };
@@ -29,10 +30,18 @@ switch (action.type) {
             loading: false,
             error: null
         };
-    case 'FETCH_GAMES_FAILURE':
+    case 'FETCH_MUSIC_SUCCESS':
+        return {
+            ...state,
+            music: action.payload,
+            loading: false,
+            error: null
+        };
+    case 'FETCH_FAILURE':
         return {
             ...state,
             games: [],
+            music: null,
             loading: false,
             error: action.payload
         };

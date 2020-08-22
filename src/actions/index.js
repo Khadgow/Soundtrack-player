@@ -1,19 +1,52 @@
-export const gamesLoaded = (newGames) => {
-    return {
-        type: 'FETCH_GAMES_SUCCESS',
-        payload: newGames
+export const fetchGames = () => {
+    return async dispatch =>{
+        try {
+            dispatch(showLoader());
+            const response = await fetch("https://gkst-bdae3.firebaseio.com/GKST/games.json");
+            const json = await response.json();
+            dispatch({
+                type: 'FETCH_GAMES_SUCCESS',
+                payload: json
+            })
+        }
+        catch (e) {
+            dispatch(fetchError(e))
+        }
+
     };
 };
 
-export const gamesRequested = () => {
+export const fetchMusic =(name) => {
+    return async dispatch =>{
+        try {
+            dispatch(showLoader());
+            const response = await fetch(`https://gkst-bdae3.firebaseio.com/GKST/soundtracks/${name}.json`);
+            const json = await response.json();
+            if(json === null){ //Firebase return null, instead of error 404
+                dispatch(fetchError(404))
+            }
+            else {
+                dispatch({
+                    type: 'FETCH_MUSIC_SUCCESS',
+                    payload: json
+                })
+            }
+        }
+        catch (e) {
+            dispatch(fetchError(e))
+        }
+    };
+};
+
+export const showLoader = () => {
     return{
-        type: 'FETCH_GAMES_REQUEST'
+        type: 'FETCH_REQUEST'
     }
 };
 
-export const gamesError = (error) => {
+export const fetchError = (error) => {
     return {
-        type: 'FETCH_GAMES_FAILURE',
+        type: 'FETCH_FAILURE',
         payload: error
     }
 };
@@ -28,7 +61,7 @@ export const gamesError = (error) => {
 export const setVolume = (volume) =>{
     return ({
         type: 'SET_VOLUME',
-        payload: volume
+        payload: volume>1 ? 1 : volume<0 ? 0 : volume
     })
 };
 export const setPause = (state) =>{
@@ -41,20 +74,6 @@ export const setTime = (time) =>{
     return ({
         type: 'SET_TIME',
         payload: time
-    })
-};
-
-export const addFavorite = (music) =>{
-    return ({
-        type: 'ADD_FAVORITE',
-        payload: music
-    })
-};
-
-export const deleteFavorite = (music) =>{
-    return ({
-        type: 'DELETE_FAVORITE',
-        payload: music
     })
 };
 
